@@ -18,8 +18,8 @@ import {
 } from "@chakra-ui/core";
 
 import { useSpaceX } from "../utils/use-space-x";
-import Error from "./error";
-import Breadcrumbs from "./breadcrumbs";
+import Error from "../shared/error";
+import Breadcrumbs from "../shared/breadcrumbs";
 import { LaunchItem } from "./launches";
 
 export default function LaunchPad() {
