@@ -1,6 +1,6 @@
 import React from "react";
-import { useParams } from "react-router-dom";
-import { MapPin, Navigation } from "react-feather";
+import {useParams} from "react-router-dom";
+import {MapPin, Navigation, Star} from "react-feather";
 import {
   Flex,
   Heading,
@@ -17,27 +17,29 @@ import {
   AspectRatioBox,
 } from "@chakra-ui/core";
 
-import { useSpaceX } from "../utils/use-space-x";
-import Error from "../shared/error";
-import Breadcrumbs from "../shared/breadcrumbs";
-import { LaunchItem } from "./launches";
+import {useSpaceX} from "../../../services/use-space-x";
+import Error from "../../base/error";
+import Breadcrumbs from "../../base/breadcrumbs";
+import {LaunchItem} from "../launches/launch-item";
+import {toFavorite} from "../../../services/favorites";
+import useLocalStorage from "../../../hooks/use-local-storage";
 
 export default function LaunchPad() {
-  let { launchPadId } = useParams();
-  const { data: launchPad, error } = useSpaceX(`/launchpads/${launchPadId}`);
+  let {launchPadId} = useParams();
+  const {data: launchPad, error} = useSpaceX(`/launchpads/${launchPadId}`);
 
-  const { data: launches } = useSpaceX(launchPad ? "/launches/past" : null, {
+  const {data: launches} = useSpaceX(launchPad ? "/launches/past" : null, {
     limit: 3,
     order: "desc",
     sort: "launch_date_utc",
     site_id: launchPad?.site_id,
   });
 
-  if (error) return <Error />;
+  if (error) return <Error/>;
   if (!launchPad) {
     return (
       <Flex justifyContent="center" alignItems="center" minHeight="50vh">
-        <Spinner size="lg" />
+        <Spinner size="lg"/>
       </Flex>
     );
   }
@@ -46,19 +48,19 @@ export default function LaunchPad() {
     <div>
       <Breadcrumbs
         items={[
-          { label: "Home", to: "/" },
-          { label: "Launch Pads", to: ".." },
-          { label: launchPad.name },
+          {label: "Home", to: "/"},
+          {label: "Launch Pads", to: ".."},
+          {label: launchPad.name},
         ]}
       />
-      <Header launchPad={launchPad} />
+      <Header launchPad={launchPad}/>
       <Box m={[3, 6]}>
-        <LocationAndVehicles launchPad={launchPad} />
+        <LocationAndVehicles launchPad={launchPad}/>
         <Text color="gray.700" fontSize={["md", null, "lg"]} my="8">
           {launchPad.details}
         </Text>
-        <Map location={launchPad.location} />
-        <RecentLaunches launches={launches} />
+        <Map location={launchPad.location}/>
+        <RecentLaunches launches={launches}/>
       </Box>
     </div>
   );
@@ -67,7 +69,26 @@ export default function LaunchPad() {
 const randomColor = (start = 200, end = 250) =>
   `hsl(${start + end * Math.random()}, 80%, 90%)`;
 
-function Header({ launchPad }) {
+function Header({launchPad}) {
+  const [favorites, setFavorites] = useLocalStorage('launch-pads');
+
+  const isFavorite = () => favorites?.some(item => item.id === launchPad.site_id);
+
+  const toggleFavorite = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    console.log(launchPad)
+    let copy = [...favorites];
+    if (isFavorite()) {
+      copy = copy.filter(item => item.id !== launchPad.site_id);
+    } else {
+      copy.push(toFavorite(launchPad));
+    }
+
+    setFavorites(copy);
+  }
+
   return (
     <Flex
       background={`linear-gradient(${randomColor()}, ${randomColor()})`}
@@ -90,6 +111,8 @@ function Header({ launchPad }) {
         borderRadius="lg"
       >
         {launchPad.site_name_long}
+        <Box as={Star} ml="2" height={8} width={8} cursor="pointer" display="inline-flex"
+             color={isFavorite() ? 'yellow.400' : 'black.900'} onClick={toggleFavorite}/>
       </Heading>
       <Stack isInline spacing="3">
         <Badge variantColor="purple" fontSize={["sm", "md"]}>
@@ -110,12 +133,12 @@ function Header({ launchPad }) {
   );
 }
 
-function LocationAndVehicles({ launchPad }) {
+function LocationAndVehicles({launchPad}) {
   return (
     <SimpleGrid columns={[1, 1, 2]} borderWidth="1px" p="4" borderRadius="md">
       <Stat>
         <StatLabel display="flex">
-          <Box as={MapPin} width="1em" />{" "}
+          <Box as={MapPin} width="1em"/>{" "}
           <Box ml="2" as="span">
             Location
           </Box>
@@ -125,7 +148,7 @@ function LocationAndVehicles({ launchPad }) {
       </Stat>
       <Stat>
         <StatLabel display="flex">
-          <Box as={Navigation} width="1em" />{" "}
+          <Box as={Navigation} width="1em"/>{" "}
           <Box ml="2" as="span">
             Vehicles
           </Box>
@@ -138,7 +161,7 @@ function LocationAndVehicles({ launchPad }) {
   );
 }
 
-function Map({ location }) {
+function Map({location}) {
   return (
     <AspectRatioBox ratio={16 / 5}>
       <Box
@@ -150,7 +173,23 @@ function Map({ location }) {
   );
 }
 
-function RecentLaunches({ launches }) {
+function RecentLaunches({launches}) {
+  const [favorites, setFavorites] = useLocalStorage('launches');
+  const toggleFavorite = (e, launch) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const isFavorite = !!favorites?.find(item => item.id === launch.id);
+    let copy = [...favorites];
+    if (isFavorite) {
+      copy = copy.filter(item => item.id !== launch.id);
+    } else {
+      copy.push(toFavorite(launch));
+    }
+
+    setFavorites(copy);
+  }
+
   if (!launches?.length) {
     return null;
   }
@@ -161,7 +200,7 @@ function RecentLaunches({ launches }) {
       </Text>
       <SimpleGrid minChildWidth="350px" spacing="4">
         {launches.map((launch) => (
-          <LaunchItem launch={launch} key={launch.flight_number} />
+          <LaunchItem favorites={favorites} launch={launch} key={launch.flight_number} toggleFavorite={toggleFavorite}/>
         ))}
       </SimpleGrid>
     </Stack>

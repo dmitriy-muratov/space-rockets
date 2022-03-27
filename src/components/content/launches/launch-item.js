@@ -1,51 +1,13 @@
-import React from "react";
-import { Badge, Box, Image, SimpleGrid, Text, Flex } from "@chakra-ui/core";
+import {Badge, Box, Flex, Image, Text} from "@chakra-ui/core";
+import {Link} from "react-router-dom";
+import {Star} from "react-feather";
+import {formatDate} from "../../../utils/format-date";
 import { format as timeAgo } from "timeago.js";
-import { Link } from "react-router-dom";
+import React from "react";
 
-import { useSpaceXPaginated } from "../utils/use-space-x";
-import { formatDate } from "../utils/format-date";
-import Error from "../shared/error";
-import Breadcrumbs from "../shared/breadcrumbs";
-import LoadMoreButton from "../shared/load-more-button";
+export function LaunchItem({ launch, favorites, toggleFavorite }) {
+  const isFavorite = () => favorites?.some(item => item.id === launch.flight_number);
 
-const PAGE_SIZE = 12;
-
-export default function Launches() {
-  const { data, error, isValidating, setSize, size } = useSpaceXPaginated(
-    "/launches/past",
-    {
-      limit: PAGE_SIZE,
-      order: "desc",
-      sort: "launch_date_utc",
-    }
-  );
-  console.log(data, error);
-  return (
-    <div>
-      <Breadcrumbs
-        items={[{ label: "Home", to: "/" }, { label: "Launches" }]}
-      />
-      <SimpleGrid m={[2, null, 6]} minChildWidth="350px" spacing="4">
-        {error && <Error />}
-        {data &&
-          data
-            .flat()
-            .map((launch) => (
-              <LaunchItem launch={launch} key={launch.flight_number} />
-            ))}
-      </SimpleGrid>
-      <LoadMoreButton
-        loadMore={() => setSize(size + 1)}
-        data={data}
-        pageSize={PAGE_SIZE}
-        isLoadingMore={isValidating}
-      />
-    </div>
-  );
-}
-
-export function LaunchItem({ launch }) {
   return (
     <Box
       as={Link}
@@ -79,7 +41,7 @@ export function LaunchItem({ launch }) {
       />
 
       <Box p="6">
-        <Box d="flex" alignItems="baseline">
+        <Box d="flex" alignItems="center">
           {launch.launch_success ? (
             <Badge px="2" variant="solid" variantColor="green">
               Successful
@@ -99,6 +61,8 @@ export function LaunchItem({ launch }) {
           >
             {launch.rocket.rocket_name} &bull; {launch.launch_site.site_name}
           </Box>
+          <Box as={Star} ml="2" color={isFavorite() ? 'yellow.400': 'gray.300'}
+               onClick={(e) => toggleFavorite(e, launch)}/>
         </Box>
 
         <Box
