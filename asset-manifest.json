@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.js": "/static/js/main.00978a96.chunk.js",
-    "main.js.map": "/static/js/main.00978a96.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.7daf23dc.js",
-    "runtime-main.js.map": "/static/js/runtime-main.7daf23dc.js.map",
-    "static/js/2.d0bad692.chunk.js": "/static/js/2.d0bad692.chunk.js",
-    "static/js/2.d0bad692.chunk.js.map": "/static/js/2.d0bad692.chunk.js.map",
-    "index.html": "/index.html",
-    "precache-manifest.55f244380b1055a1c8e20e07fc17520c.js": "/precache-manifest.55f244380b1055a1c8e20e07fc17520c.js",
-    "service-worker.js": "/service-worker.js",
-    "static/js/2.d0bad692.chunk.js.LICENSE.txt": "/static/js/2.d0bad692.chunk.js.LICENSE.txt"
+    "main.js": "/space-rockets/static/js/main.00978a96.chunk.js",
+    "main.js.map": "/space-rockets/static/js/main.00978a96.chunk.js.map",
+    "runtime-main.js": "/space-rockets/static/js/runtime-main.0559fa46.js",
+    "runtime-main.js.map": "/space-rockets/static/js/runtime-main.0559fa46.js.map",
+    "static/js/2.d0bad692.chunk.js": "/space-rockets/static/js/2.d0bad692.chunk.js",
+    "static/js/2.d0bad692.chunk.js.map": "/space-rockets/static/js/2.d0bad692.chunk.js.map",
+    "index.html": "/space-rockets/index.html",
+    "precache-manifest.9a2280f44a700289868dd7adf0f736e2.js": "/space-rockets/precache-manifest.9a2280f44a700289868dd7adf0f736e2.js",
+    "service-worker.js": "/space-rockets/service-worker.js",
+    "static/js/2.d0bad692.chunk.js.LICENSE.txt": "/space-rockets/static/js/2.d0bad692.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
-    "static/js/runtime-main.7daf23dc.js",
+    "static/js/runtime-main.0559fa46.js",
     "static/js/2.d0bad692.chunk.js",
     "static/js/main.00978a96.chunk.js"
   ]
