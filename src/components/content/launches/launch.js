@@ -1,7 +1,7 @@
 import React from "react";
-import { useParams, Link as RouterLink } from "react-router-dom";
-import { format as timeAgo } from "timeago.js";
-import { Watch, MapPin, Navigation, Layers } from "react-feather";
+import {useParams, Link as RouterLink} from "react-router-dom";
+import {format as timeAgo} from "timeago.js";
+import {Watch, MapPin, Navigation, Layers, Star} from "react-feather";
 import {
   Flex,
   Heading,
@@ -21,21 +21,23 @@ import {
   StatGroup,
 } from "@chakra-ui/core";
 
-import { useSpaceX } from "../utils/use-space-x";
-import {formatDateTime, formatDateTimeLaunch} from "../utils/format-date";
-import Error from "../shared/error";
-import Breadcrumbs from "../shared/breadcrumbs";
-import {TooltipWrap} from "../shared/tooltip";
+import {useSpaceX} from "../../../services/use-space-x";
+import {formatDateTime, formatDateTimeLaunch} from "../../../utils/format-date";
+import Error from "../../base/error";
+import Breadcrumbs from "../../base/breadcrumbs";
+import {TooltipWrap} from "../../base/tooltip";
+import {toFavorite} from "../../../services/favorites";
+import useLocalStorage from "../../../hooks/use-local-storage";
 
 export default function Launch() {
-  let { launchId } = useParams();
-  const { data: launch, error } = useSpaceX(`/launches/${launchId}`);
+  let {launchId} = useParams();
+  const {data: launch, error} = useSpaceX(`/launches/${launchId}`);
 
-  if (error) return <Error />;
+  if (error) return <Error/>;
   if (!launch) {
     return (
       <Flex justifyContent="center" alignItems="center" minHeight="50vh">
-        <Spinner size="lg" />
+        <Spinner size="lg"/>
       </Flex>
     );
   }
@@ -44,26 +46,41 @@ export default function Launch() {
     <div>
       <Breadcrumbs
         items={[
-          { label: "Home", to: "/" },
-          { label: "Launches", to: ".." },
-          { label: `#${launch.flight_number}` },
+          {label: "Home", to: "/"},
+          {label: "Launches", to: ".."},
+          {label: `#${launch.flight_number}`},
         ]}
       />
-      <Header launch={launch} />
+      <Header launch={launch}/>
       <Box m={[3, 6]}>
-        <TimeAndLocation launch={launch} />
-        <RocketInfo launch={launch} />
+        <TimeAndLocation launch={launch}/>
+        <RocketInfo launch={launch}/>
         <Text color="gray.700" fontSize={["md", null, "lg"]} my="8">
           {launch.details}
         </Text>
-        <Video launch={launch} />
-        <Gallery images={launch.links.flickr_images} />
+        <Video launch={launch}/>
+        <Gallery images={launch.links.flickr_images}/>
       </Box>
     </div>
   );
 }
 
-function Header({ launch }) {
+function Header({launch}) {
+  const [favorites, setFavorites] = useLocalStorage('launches');
+
+  const isFavorite = () => favorites?.some(item => item.id === launch.flight_number);
+
+  const toggleFavorite = (launch) => {
+    let copy = [...favorites];
+    if (isFavorite()) {
+      copy = copy.filter(item => item.id !== launch.flight_number);
+    } else {
+      copy.push(toFavorite(launch));
+    }
+
+    setFavorites(copy);
+  }
+
   return (
     <Flex
       bgImage={`url(${launch.links.flickr_images[0]})`}
@@ -95,6 +112,8 @@ function Header({ launch }) {
         borderRadius="lg"
       >
         {launch.mission_name}
+        <Box as={Star} ml="2" height={8} width={8} cursor="pointer" display="inline-flex"
+             color={isFavorite() ? 'yellow.400' : 'black.900'} onClick={() => toggleFavorite(launch)}/>
       </Heading>
       <Stack isInline spacing="3">
         <Badge variantColor="purple" fontSize={["xs", "md"]}>
@@ -114,26 +133,26 @@ function Header({ launch }) {
   );
 }
 
-function TimeAndLocation({ launch }) {
+function TimeAndLocation({launch}) {
   return (
     <SimpleGrid columns={[1, 1, 2]} borderWidth="1px" p="4" borderRadius="md">
       <Stat>
         <StatLabel display="flex">
-          <Box as={Watch} width="1em" />{" "}
+          <Box as={Watch} width="1em"/>{" "}
           <Box ml="2" as="span">
             Launch Date
           </Box>
         </StatLabel>
         <StatNumber fontSize={["md", "xl"]}>
           <TooltipWrap placement="top" label={formatDateTime(launch.launch_date_local)}>
-              {formatDateTimeLaunch(launch.launch_date_local)}
+            {formatDateTimeLaunch(launch.launch_date_local)}
           </TooltipWrap>
         </StatNumber>
         <StatHelpText>{timeAgo(launch.launch_date_utc)}</StatHelpText>
       </Stat>
       <Stat>
         <StatLabel display="flex">
-          <Box as={MapPin} width="1em" />{" "}
+          <Box as={MapPin} width="1em"/>{" "}
           <Box ml="2" as="span">
             Launch Site
           </Box>
@@ -152,7 +171,7 @@ function TimeAndLocation({ launch }) {
   );
 }
 
-function RocketInfo({ launch }) {
+function RocketInfo({launch}) {
   const cores = launch.rocket.first_stage.cores;
 
   return (
@@ -165,7 +184,7 @@ function RocketInfo({ launch }) {
     >
       <Stat>
         <StatLabel display="flex">
-          <Box as={Navigation} width="1em" />{" "}
+          <Box as={Navigation} width="1em"/>{" "}
           <Box ml="2" as="span">
             Rocket
           </Box>
@@ -178,7 +197,7 @@ function RocketInfo({ launch }) {
       <StatGroup>
         <Stat>
           <StatLabel display="flex">
-            <Box as={Layers} width="1em" />{" "}
+            <Box as={Layers} width="1em"/>{" "}
             <Box ml="2" as="span">
               First Stage
             </Box>
@@ -196,7 +215,7 @@ function RocketInfo({ launch }) {
         </Stat>
         <Stat>
           <StatLabel display="flex">
-            <Box as={Layers} width="1em" />{" "}
+            <Box as={Layers} width="1em"/>{" "}
             <Box ml="2" as="span">
               Second Stage
             </Box>
@@ -216,7 +235,7 @@ function RocketInfo({ launch }) {
   );
 }
 
-function Video({ launch }) {
+function Video({launch}) {
   return (
     <AspectRatioBox maxH="400px" ratio={1.7}>
       <Box
@@ -229,12 +248,12 @@ function Video({ launch }) {
   );
 }
 
-function Gallery({ images }) {
+function Gallery({images}) {
   return (
     <SimpleGrid my="6" minChildWidth="350px" spacing="4">
       {images.map((image) => (
         <a href={image} key={image}>
-          <Image src={image.replace("_o.jpg", "_z.jpg")} />
+          <Image src={image.replace("_o.jpg", "_z.jpg")}/>
         </a>
       ))}
     </SimpleGrid>

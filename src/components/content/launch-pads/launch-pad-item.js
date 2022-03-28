@@ -1,47 +1,11 @@
+import {Badge, Box, Text} from "@chakra-ui/core";
+import {Link} from "react-router-dom";
 import React from "react";
-import { Badge, Box, SimpleGrid, Text } from "@chakra-ui/core";
-import { Link } from "react-router-dom";
+import {Star} from "react-feather";
 
-import Error from "../shared/error";
-import Breadcrumbs from "../shared/breadcrumbs";
-import LoadMoreButton from "../shared/load-more-button";
-import { useSpaceXPaginated } from "../utils/use-space-x";
+export function LaunchPadItem({launchPad, favorites, toggleFavorite}) {
+  const isFavorite = () => !!favorites?.find(item => item.id === launchPad.site_id);
 
-const PAGE_SIZE = 12;
-
-export default function LaunchPads() {
-  const { data, error, isValidating, size, setSize } = useSpaceXPaginated(
-    "/launchpads",
-    {
-      limit: PAGE_SIZE,
-    }
-  );
-
-  return (
-    <div>
-      <Breadcrumbs
-        items={[{ label: "Home", to: "/" }, { label: "Launch Pads" }]}
-      />
-      <SimpleGrid m={[2, null, 6]} minChildWidth="350px" spacing="4">
-        {error && <Error />}
-        {data &&
-          data
-            .flat()
-            .map((launchPad) => (
-              <LaunchPadItem key={launchPad.site_id} launchPad={launchPad} />
-            ))}
-      </SimpleGrid>
-      <LoadMoreButton
-        loadMore={() => setSize(size + 1)}
-        data={data}
-        pageSize={PAGE_SIZE}
-        isLoadingMore={isValidating}
-      />
-    </div>
-  );
-}
-
-function LaunchPadItem({ launchPad }) {
   return (
     <Box
       as={Link}
@@ -53,7 +17,7 @@ function LaunchPadItem({ launchPad }) {
       position="relative"
     >
       <Box p="6">
-        <Box d="flex" alignItems="baseline">
+        <Box d="flex" alignItems="center">
           {launchPad.status === "active" ? (
             <Badge px="2" variant="solid" variantColor="green">
               Active
@@ -74,6 +38,8 @@ function LaunchPadItem({ launchPad }) {
             {launchPad.attempted_launches} attempted &bull;{" "}
             {launchPad.successful_launches} succeeded
           </Box>
+          <Box as={Star} ml="2" color={isFavorite() ? 'yellow.400' : 'gray.300'}
+               onClick={(e) => toggleFavorite(e, launchPad)}/>
         </Box>
 
         <Box
