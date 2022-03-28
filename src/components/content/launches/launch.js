@@ -18,7 +18,7 @@ import {
   Link,
   Stack,
   AspectRatioBox,
-  StatGroup,
+  StatGroup, useColorMode,
 } from "@chakra-ui/core";
 
 import {useSpaceX} from "../../../services/use-space-x";
@@ -28,8 +28,10 @@ import Breadcrumbs from "../../base/breadcrumbs";
 import {TooltipWrap} from "../../base/tooltip";
 import {toFavorite} from "../../../services/favorites";
 import useLocalStorage from "../../../hooks/use-local-storage";
+import {Theme} from "../../../services/styling";
 
 export default function Launch() {
+  const {colorMode} = useColorMode();
   let {launchId} = useParams();
   const {data: launch, error} = useSpaceX(`/launches/${launchId}`);
 
@@ -43,7 +45,7 @@ export default function Launch() {
   }
 
   return (
-    <div>
+    <Box color={Theme().textColor[colorMode]} bg={Theme().bgColor[colorMode]}>
       <Breadcrumbs
         items={[
           {label: "Home", to: "/"},
@@ -55,13 +57,13 @@ export default function Launch() {
       <Box m={[3, 6]}>
         <TimeAndLocation launch={launch}/>
         <RocketInfo launch={launch}/>
-        <Text color="gray.700" fontSize={["md", null, "lg"]} my="8">
+        <Text color={Theme().textColor[colorMode]} fontSize={["md", null, "lg"]} my="8">
           {launch.details}
         </Text>
         <Video launch={launch}/>
         <Gallery images={launch.links.flickr_images}/>
       </Box>
-    </div>
+    </Box>
   );
 }
 

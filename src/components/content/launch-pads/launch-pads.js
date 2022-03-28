@@ -17,8 +17,8 @@ import {LayoutDrawer} from "../../layout/layout-drawer";
 const PAGE_SIZE = 12;
 
 export default function LaunchPads() {
-  const {isOpen, onOpen, onClose} = useDisclosure()
-  const favBtnRef = useRef()
+  const {isOpen, onOpen, onClose} = useDisclosure();
+  const favBtnRef = useRef();
 
   const {data, error, isValidating, size, setSize} = useSpaceXPaginated(
     "/launchpads",
@@ -65,13 +65,10 @@ export default function LaunchPads() {
       </Box>
       <SimpleGrid m={[2, null, 6]} minChildWidth="350px" spacing="4">
         {error && <Error/>}
-        {data &&
-        data
-          .flat()
-          .map((launchPad) => (
-            <LaunchPadItem key={launchPad.site_id} launchPad={launchPad} favorites={favorites}
-                           toggleFavorite={toggleFavorite}/>
-          ))}
+        {data && data.flat().map((launchPad) => (
+          <LaunchPadItem key={launchPad.site_id} launchPad={launchPad} favorites={favorites}
+                         toggleFavorite={toggleFavorite}/>
+        ))}
       </SimpleGrid>
       <LoadMoreButton
         loadMore={() => setSize(size + 1)}
