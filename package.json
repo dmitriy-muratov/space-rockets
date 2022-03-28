@@ -1,9 +1,11 @@
 {
+  "homepage": "https://dmitriy-muratov.github.io/space-rockets",
   "name": "pleo-space-rockets-app",
   "version": "1.0.0",
   "contributors": [
     "Maciek Pekala <maciek@pleo.io>",
-    "Peter Scott <peter@pleo.io>"
+    "Peter Scott <peter@pleo.io>",
+    "Dmytro Muratov <muratovdima@gmail.com>"
   ],
   "license": "MIT",
   "private": true,
@@ -12,6 +14,7 @@
     "@emotion/core": "^10.0.35",
     "@emotion/styled": "^10.0.27",
     "emotion-theming": "^10.0.27",
+    "gh-pages": "^3.2.3",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.8",
