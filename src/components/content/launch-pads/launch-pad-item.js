@@ -1,9 +1,11 @@
-import {Badge, Box, Text} from "@chakra-ui/core";
+import {Badge, Box, Text, useColorMode} from "@chakra-ui/core";
 import {Link} from "react-router-dom";
 import React from "react";
 import {Star} from "react-feather";
+import {Theme} from "../../../services/styling";
 
 export function LaunchPadItem({launchPad, favorites, toggleFavorite}) {
+  const {colorMode} = useColorMode();
   const isFavorite = () => !!favorites?.find(item => item.id === launchPad.site_id);
 
   return (
@@ -15,6 +17,8 @@ export function LaunchPadItem({launchPad, favorites, toggleFavorite}) {
       rounded="lg"
       overflow="hidden"
       position="relative"
+      borderColor={Theme().borderColorCard[colorMode]}
+      bg={Theme().tileColorCard[colorMode]}
     >
       <Box p="6">
         <Box d="flex" alignItems="center">

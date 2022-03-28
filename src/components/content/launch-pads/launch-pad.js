@@ -14,7 +14,7 @@ import {
   Text,
   Spinner,
   Stack,
-  AspectRatioBox,
+  AspectRatioBox, useColorMode,
 } from "@chakra-ui/core";
 
 import {useSpaceX} from "../../../services/use-space-x";
@@ -23,8 +23,10 @@ import Breadcrumbs from "../../base/breadcrumbs";
 import {LaunchItem} from "../launches/launch-item";
 import {toFavorite} from "../../../services/favorites";
 import useLocalStorage from "../../../hooks/use-local-storage";
+import {Theme} from "../../../services/styling";
 
 export default function LaunchPad() {
+  const {colorMode} = useColorMode();
   let {launchPadId} = useParams();
   const {data: launchPad, error} = useSpaceX(`/launchpads/${launchPadId}`);
 
@@ -45,7 +47,7 @@ export default function LaunchPad() {
   }
 
   return (
-    <div>
+    <Box  bg={Theme().bgColor[colorMode]} color={Theme().textColor[colorMode]}>
       <Breadcrumbs
         items={[
           {label: "Home", to: "/"},
@@ -56,13 +58,13 @@ export default function LaunchPad() {
       <Header launchPad={launchPad}/>
       <Box m={[3, 6]}>
         <LocationAndVehicles launchPad={launchPad}/>
-        <Text color="gray.700" fontSize={["md", null, "lg"]} my="8">
+        <Text color={Theme().textColor[colorMode]} fontSize={["md", null, "lg"]} my="8">
           {launchPad.details}
         </Text>
         <Map location={launchPad.location}/>
         <RecentLaunches launches={launches}/>
       </Box>
-    </div>
+    </Box>
   );
 }
 
@@ -194,7 +196,7 @@ function RecentLaunches({launches}) {
     return null;
   }
   return (
-    <Stack my="8" spacing="3">
+    <Stack py="8" spacing="3">
       <Text fontSize="xl" fontWeight="bold">
         Last launches
       </Text>

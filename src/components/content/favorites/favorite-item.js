@@ -1,9 +1,12 @@
 import React from "react";
-import {Badge, Box} from "@chakra-ui/core";
+import {Badge, Box, useColorMode} from "@chakra-ui/core";
 import {Trash2} from "react-feather";
 import {Link} from "react-router-dom";
+import {Theme} from "../../../services/styling";
 
 export default function FavoriteItem({favorite, removeFavorite}) {
+  const { colorMode } = useColorMode();
+
   return (
     <Box
       as={Link}
@@ -17,6 +20,8 @@ export default function FavoriteItem({favorite, removeFavorite}) {
       position="relative"
       p="4"
       mt={6}
+      borderColor={Theme().borderColorCard[colorMode]}
+      bg={Theme().tileColorCard[colorMode]}
     >
       <Box d="flex" alignItems="baseline">
         <Badge px="2" variant="solid" variantColor="pink">

@@ -1,11 +1,13 @@
-import {Badge, Box, Flex, Image, Text} from "@chakra-ui/core";
+import {Badge, Box, Flex, Image, Text, useColorMode} from "@chakra-ui/core";
 import {Link} from "react-router-dom";
 import {Star} from "react-feather";
 import {formatDate} from "../../../utils/format-date";
 import { format as timeAgo } from "timeago.js";
 import React from "react";
+import {Theme} from "../../../services/styling";
 
 export function LaunchItem({ launch, favorites, toggleFavorite }) {
+  const { colorMode } = useColorMode();
   const isFavorite = () => favorites?.some(item => item.id === launch.flight_number);
 
   return (
@@ -17,6 +19,9 @@ export function LaunchItem({ launch, favorites, toggleFavorite }) {
       rounded="lg"
       overflow="hidden"
       position="relative"
+      bg={Theme().bgColorCard[colorMode]}
+      borderColor={Theme().borderColorCard[colorMode]}
+      color={Theme().textColor[colorMode]}
     >
       <Image
         src={
